@@ -20,12 +20,12 @@ namespace конвертор_валют
             double rateCNYtoRUB = 12.7;
             double rateRUBtoCNY = 0.078757;
 
-            double rateGBToRUB = 114;
-            double rateRUBtoGBT = 0.008772;
+            double rateGBPtoRUB = 114;
+            double rateRUBtoGBP = 0.008772;
 
             double rateEURtoUSD = 1.06;
-            double rateCNYtoGBT = 0.110299;
-            double rateGBTtoCNY = 9.07;
+            double rateCNYtoGBP = 0.110299;
+            double rateGBPtoCNY = 9.07;
 
             double compareSum = 0;
             string changeFromStr, changeToStr;
@@ -55,8 +55,8 @@ namespace конвертор_валют
                     + $"Купить EUR: {rateRUBtoEUR} RUB\n"
                     + $"Продать СNY: {rateCNYtoRUB} RUB, "
                     + $"Купить CNY: {rateRUBtoCNY} RUB\n"
-                    + $"Продать GBP: {rateGBToRUB} EUR, "
-                    + $"Купить GBP: {rateRUBtoGBT} EUR\n");
+                    + $"Продать GBP: {rateGBPtoRUB} EUR, "
+                    + $"Купить GBP: {rateRUBtoGBP} EUR\n");
 
                 Console.SetCursorPosition(13, 4);
                 Console.WriteLine($"Обменять EUR/USD: {rateEURtoUSD}\n");
@@ -150,7 +150,7 @@ namespace конвертор_валют
                     }
                     else if (changeFromStr == "5")
                     {
-                        rubN += changeSum * rateGBToRUB;
+                        rubN += changeSum * rateGBPtoRUB;
                         eurN -= changeSum;
                     }
                     else
@@ -167,7 +167,7 @@ namespace конвертор_валют
                     }
                     else if (changeFromStr == "5")
                     {
-                        usdN += changeSum * rateGBTtoCNY;
+                        usdN += changeSum * rateGBPtoCNY;
                         eurN = changeSum;
                     }
                     else
@@ -184,7 +184,7 @@ namespace конвертор_валют
                     }
                     else if (changeFromStr == "4")
                     {
-                        eurN += changeSum / rateCNYtoGBT;
+                        eurN += changeSum / rateCNYtoGBP;
                         usdN = changeSum;
                     }
                     else
@@ -208,3 +208,4 @@ namespace конвертор_валют
         }
     }
 }
+
