@@ -1,0 +1,94 @@
+using System;
+
+namespace Меню_для_управления_консолью
+{
+    internal class Program
+    {
+        static void Main()
+        {
+            string username;
+            string password;
+            bool loggedIn = false;
+
+            while (!loggedIn)
+            {
+                Console.WriteLine("Введите логин:");
+                username = Console.ReadLine();
+
+                Console.WriteLine("Введите пароль:");
+                password = Console.ReadLine();
+
+                string userCode = "user";
+                string passwordCode = "password";
+                if (username == userCode && password == passwordCode)
+                {
+                    Console.WriteLine("Вход выполнен успешно!");
+                    loggedIn = true;
+                }
+                else
+                {
+                    Console.WriteLine("Неверный логин или пароль! Попробуйте снова\n");
+                }
+            }
+
+            while (isStartMenu)
+            {
+                Console.WriteLine("Меню:");
+                Console.WriteLine("1-Изменить размер окна");
+                Console.WriteLine("2-Выбрать цвет текста");
+                Console.WriteLine("3-Выбрать цвет фона");
+                Console.WriteLine("4-Выйти");
+
+                Console.Write("Выберите действие: ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        SetWindowSize();
+                        break;
+                    case "2":
+                        SetConsoleTextColor();
+                        break;
+                    case "3":
+                        SetConsoleBackgroundColor();
+                        break;
+                    case "4":
+                        ExitApplication();
+                        break;
+                    default:
+                        Console.WriteLine("Некорректный выбор. Попробуйте снова.");
+                        break;
+                }
+            }
+        }
+        private static bool isStartMenu = true;
+
+        private static void SetWindowSize()
+        {
+            Console.Write("Введите ширину окна: ");
+            int width = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите высоту окна: ");
+            int height = Convert.ToInt32(Console.ReadLine());
+            Console.SetWindowSize(width, height);
+        }
+
+        private static void SetConsoleTextColor()
+        {
+            Console.Write("Выберите цвет текста (например: красный, жёлтый, синий): ");
+            Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), Console.ReadLine(), true);
+        }
+
+        private static void SetConsoleBackgroundColor()
+        {
+            Console.Write("Выберите цвет фона (например: красный, жёлтый, синий): ");
+            Console.BackgroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), Console.ReadLine(), true);
+            Console.Clear();
+        }
+
+        private static void ExitApplication()
+        {
+            isStartMenu = false;
+        }
+    }
+}
