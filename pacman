@@ -1,0 +1,108 @@
+using System;
+using System.IO;
+
+namespace Pacman
+{
+    internal class Program
+    {
+        static char[,] map;
+        static int pacmanRow;
+        static int pacmanCol;
+        static void Main(string[] args)
+        {
+            LoadMap("map.txt");
+
+            while (true)
+            {
+                Console.Clear();
+                DrawMap();
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                MovePacman(key);
+
+                if (AllDotsEaten())
+                {
+                    Console.WriteLine("Вы выиграли");
+                    break;
+                }
+            }
+        }
+
+        static void LoadMap(string filename)
+        {
+            string[] lines = File.ReadAllLines(filename);
+            map = new char[lines.Length, lines[0].Length];
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                for (int j = 0; j < lines[i].Length; j++)
+                {
+                    map[i, j] = lines[i][j];
+                    if (lines[i][j] == 'P')
+                    {
+                        pacmanRow = i;
+                        pacmanCol = j;
+                    }
+                }
+            }
+        }
+
+        static void DrawMap()
+        {
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    Console.Write(map[i, j]);
+                }
+                Console.WriteLine();
+            }
+        }
+
+        static void MovePacman(ConsoleKeyInfo key)
+        {
+            int newRow = pacmanRow;
+            int newCol = pacmanCol;
+
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    newRow--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    newRow++;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    newCol--;
+                    break;
+                case ConsoleKey.RightArrow:
+                    newCol++;
+                    break;
+            }
+            if (IsWall(newRow, newCol))
+                return;
+
+            map[pacmanRow, pacmanCol] = ' ';
+            pacmanRow = newRow;
+            pacmanCol = newCol;
+            map[pacmanRow, pacmanCol] = 'P';
+        }
+
+        static bool IsWall(int row, int col)
+        {
+            return map[row, col] == '#';
+        }
+
+        static bool AllDotsEaten()
+        {
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (map[i, j] == '.')
+                        return false;
+                }
+            }
+            return true;
+        }
+    }
+}
