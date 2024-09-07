@@ -27,12 +27,8 @@ namespace Динамический_массив
                 Console.WriteLine("Чтобы перемешать введите 'перемешать'");
                 Console.WriteLine("Чтобы выйти введите 'выход'");
 
-                for (int i = 0; i < numbers.Length; i++)
-                {
-                    Console.Write($"{numbers[i]} ");
-                }
+                PrintArray(numbers);
 
-                Console.WriteLine();
                 string comandUser = Console.ReadLine();
 
                 switch (comandUser)
@@ -40,17 +36,19 @@ namespace Динамический_массив
                     case ComandDelete:
                         numbers = DeleteNumberArray(numbers);
                         break;
+
                     case ComandSort:
-                        numbers = SortNumberArray(numbers);
-                        PrintArray(numbers);
+                        SortNumberArray(numbers);
                         break;
+
                     case ComandRandom:
                         RandomNumberArray(numbers);
-                        PrintArray(numbers);
                         break;
+
                     case ComandExit:
                         isStart = false;
                         break;
+
                     default:
                         if (int.TryParse(comandUser, out int number))
                         {
@@ -64,6 +62,7 @@ namespace Динамический_массив
                 }
             }
         }
+
         static void PrintArray(int[] array)
         {
             for (int i = 0; i < array.Length; i++)
@@ -72,33 +71,37 @@ namespace Динамический_массив
             }
             Console.WriteLine();
         }
+
         static void RandomNumberArray(int[] numbers)
         {
-            Random random = new Random();
-            for (int j = 0; j < numbers.Length; j++)
+            var random = new Random();
+            int n = numbers.Length;
+            int[] array = (int[])numbers.Clone();
+            while (n > 1)
             {
-                int randomNumber = random.Next(j, numbers.Length);
-                int temp = numbers[j];
-                numbers[j] = numbers[randomNumber];
-                numbers[randomNumber] = temp;
+                int k = random.Next(n--);
+                (array[n], array[k]) = (array[k], array[n]);
             }
+            numbers = array;
         }
+
         static int[] SortNumberArray(int[] numbers)
         {
-            for (int i = 0; i < numbers.Length - 1; i++)
+            for (int i = 0; i < numbers.Length; i++)
             {
-                for (int j = 0; j < numbers.Length - 1 - i; j++)
+                for (int j = 0; j < numbers.Length - 1; j++)
                 {
                     if (numbers[j] > numbers[j + 1])
                     {
-                        int temp = numbers[j];
+                        int tempNumber = numbers[j];
                         numbers[j] = numbers[j + 1];
-                        numbers[j + 1] = temp;
+                        numbers[j + 1] = tempNumber;
                     }
                 }
             }
             return numbers;
         }
+
         static int[] AddNumberArray(int number, int[] array)
         {
             int[] newArray = new int[array.Length + 1];
@@ -106,26 +109,19 @@ namespace Динамический_массив
             newArray[array.Length] = number;
             return newArray;
         }
+
         static int[] DeleteNumberArray(int[] numbers)
         {
             Console.WriteLine("Введите индекс удаляемого объекта (от 0 до {0})", numbers.Length - 1);
             if (int.TryParse(Console.ReadLine(), out int index) && index >= 0 && index < numbers.Length)
             {
-                int[] newArray = new int[numbers.Length - 1];
-                for (int i = 0, j = 0; i < numbers.Length; i++)
-                {
-                    if (i != index)
-                    {
-                        newArray[j++] = numbers[i];
-                    }
-                }
-                return newArray;
+                return numbers.Where((num, i) => i != index).ToArray();
             }
             else
             {
                 Console.WriteLine("Некорректный индекс. Попробуйте снова.");
-                
             }
+
             return numbers;
         }
     }
