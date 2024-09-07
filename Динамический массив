@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Динамический_массив
 {
-        internal class Program
+    internal class Program
     {
         private const string ComandDelete = "удалить";
         private const string ComandSort = "сортировать";
@@ -17,16 +17,15 @@ namespace Динамический_массив
         {
             int[] numbers = new int[0];
             bool isStart = true;
-            int number;
 
             while (isStart)
             {
                 Console.Clear();
 
-                Console.WriteLine("Чтобы отсортировать введите сортировать");
-                Console.WriteLine("Чтобы удалить введите удалить");
-                Console.WriteLine("Чтобы перемешать введите перемешать");
-                Console.WriteLine("Чтобы выйти введите выход");
+                Console.WriteLine("Чтобы отсортировать введите 'сортировать'");
+                Console.WriteLine("Чтобы удалить введите 'удалить'");
+                Console.WriteLine("Чтобы перемешать введите 'перемешать'");
+                Console.WriteLine("Чтобы выйти введите 'выход'");
 
                 for (int i = 0; i < numbers.Length; i++)
                 {
@@ -36,70 +35,65 @@ namespace Динамический_массив
                 Console.WriteLine();
                 string comandUser = Console.ReadLine();
 
-                if (int.TryParse(comandUser, out number))
+                switch (comandUser)
                 {
-                    numbers = AddNumberArray(number, numbers);
-                }
-                else
-                {
-                    switch (comandUser)
-                    {
-                        case ComandDelete:
-                            numbers = DeleteNumberArray(numbers);
-                            break;
-                        case ComandSort:
-                            numbers = SortNumberArray(numbers);
-                            for (int i = 0; i < numbers.Length; i++)
-                            {
-                                Console.Write($"{numbers[i]} ");
-                            }
-                            Console.WriteLine();
-                            break;
-                        case ComandRandom:
-                            RandomNumberArray(numbers);
-                            for (int i = 0; i < numbers.Length; i++)
-                            {
-                                Console.Write($"{numbers[i]} ");
-                            }
-                            Console.WriteLine();
-                            break;
-                        case ComandExit:
-                            isStart = false;
-                            break;
-                        default:
+                    case ComandDelete:
+                        numbers = DeleteNumberArray(numbers);
+                        break;
+                    case ComandSort:
+                        numbers = SortNumberArray(numbers);
+                        PrintArray(numbers);
+                        break;
+                    case ComandRandom:
+                        RandomNumberArray(numbers);
+                        PrintArray(numbers);
+                        break;
+                    case ComandExit:
+                        isStart = false;
+                        break;
+                    default:
+                        if (int.TryParse(comandUser, out int number))
+                        {
+                            numbers = AddNumberArray(number, numbers);
+                        }
+                        else
+                        {
                             Console.WriteLine("Неизвестная команда");
-                            break;
-                    }
+                        }
+                        break;
                 }
             }
+        }
+        static void PrintArray(int[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write($"{array[i]} ");
+            }
+            Console.WriteLine();
         }
         static void RandomNumberArray(int[] numbers)
         {
             Random random = new Random();
-            int minRandom = 0;
-            int maxRandom = numbers.Length;
-            int changeNumber;
-            int randomNumber;
-
-            for (int j = 0; j < numbers.Length - 1; j++)
+            for (int j = 0; j < numbers.Length; j++)
             {
-                randomNumber = random.Next(minRandom, maxRandom);
-                changeNumber = numbers[j];
+                int randomNumber = random.Next(j, numbers.Length);
+                int temp = numbers[j];
                 numbers[j] = numbers[randomNumber];
-                numbers[randomNumber] = changeNumber;
+                numbers[randomNumber] = temp;
             }
         }
         static int[] SortNumberArray(int[] numbers)
         {
-            for (int i = 0; i < numbers.Length; i++)
+            for (int i = 0; i < numbers.Length - 1; i++)
             {
-                for (int j = 0; j < numbers.Length - 1; j++)
+                for (int j = 0; j < numbers.Length - 1 - i; j++)
                 {
                     if (numbers[j] > numbers[j + 1])
                     {
-                        int tempNumber = numbers[j];
+                        int temp = numbers[j];
                         numbers[j] = numbers[j + 1];
-                        numbers[j + 1] = tempNumber;
+                        numbers[j + 1] = temp;
                     }
                 }
             }
@@ -107,44 +101,30 @@ namespace Динамический_массив
         }
         static int[] AddNumberArray(int number, int[] array)
         {
-            int[] ints = new int[array.Length + 1];
-
-            for (int i = 0; i < array.Length; i++)
-            {
-                ints[i] = array[i];
-            }
-
-            ints[array.Length] = number;
-            return ints;
+            int[] newArray = new int[array.Length + 1];
+            array.CopyTo(newArray, 0);
+            newArray[array.Length] = number;
+            return newArray;
         }
         static int[] DeleteNumberArray(int[] numbers)
         {
-            int index;
-            bool isCheckInputNumber = false;
-            string comandUser;
-
-            while (isCheckInputNumber == false)
+            Console.WriteLine("Введите индекс удаляемого объекта (от 0 до {0})", numbers.Length - 1);
+            if (int.TryParse(Console.ReadLine(), out int index) && index >= 0 && index < numbers.Length)
             {
-                Console.WriteLine("Введите индекс удаляемого объекта (от 0 до {0})", numbers.Length - 1);
-                comandUser = Console.ReadLine();
-
-                if (int.TryParse(comandUser, out index) && index >= 0 && index < numbers.Length)
+                int[] newArray = new int[numbers.Length - 1];
+                for (int i = 0, j = 0; i < numbers.Length; i++)
                 {
-                    int[] newArray = new int[numbers.Length - 1];
-                    for (int i = 0, j = 0; i < numbers.Length; i++)
+                    if (i != index)
                     {
-                        if (i != index)
-                        {
-                            newArray[j++] = numbers[i];
-                        }
+                        newArray[j++] = numbers[i];
                     }
-                    isCheckInputNumber = true;
-                    return newArray;
                 }
-                else
-                {
-                    Console.WriteLine("Некорректный индекс. Попробуйте снова.");
-                }
+                return newArray;
+            }
+            else
+            {
+                Console.WriteLine("Некорректный индекс. Попробуйте снова.");
+                
             }
             return numbers;
         }
