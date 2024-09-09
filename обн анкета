@@ -1,0 +1,177 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp6
+{
+    internal class Program
+    {
+
+        static int[] AddNumberArray(int number, int[] array)// Функция для добавления элемента в массив
+        {
+            int[] ints = new int[array.Length + 1];// Создаем новый массив с увеличенной длиной на 1
+
+            for (int i = 0; i < ints.Length - 1; i++)// Копирование элементов старого массива в новый
+            {
+                ints[i] = array[i];
+            }
+
+            ints[array.Length] = number;// Добавление нового элемента в конец нового массива
+            return ints;// Возвращение нового массива с добавленным элементом
+        }
+
+        static int[] DeleteNumberArray(int[] numbers)// Функция для удаления элемента из массива
+        {
+            int index;// Индекс удаляемого элемента
+            bool isCkeckInputNumber = false;//проверка того что ввёл пользователь
+            string comandUser;// Введенная пользователем команда
+            int[] array = numbers;// Копирование исходного массива
+            const string ComandStopInput = "Удалить";// Константа для команды остановки ввода индекса
+
+            while (isCkeckInputNumber == false)// Цикл ожидания корректного ввода индекса
+            {
+                Console.WriteLine("Введите индекс удаляеммого объекта");
+                comandUser = Console.ReadLine();
+
+                if (int.TryParse(comandUser, out index)) // Проверка, является ли ввод числом
+                {
+                    if (index < numbers.Length)// Проверка, существует ли элемент по указанному индексу
+                    {
+                        array = new int[numbers.Length - 1];// Создаем новый массив с уменьшенной длиной
+
+                        for (int i = 0; i < index; i++)// Копируем элементы из исходного массива в новый до указанного индекса
+                            array[i] = numbers[i];
+                        for (int i = index; i < array.Length; i++) // Копируем элементы из исходного массива в новый, начиная с элемента после удаляемого
+                            array[i] = numbers[i + 1];
+
+                        isCkeckInputNumber = true;// подтверждаем что ввод был корректным
+                    }
+                    else
+                    {
+                        Console.WriteLine("В массиве нет элементов");// Выводим сообщение об ошибке, если индекс выходит за границы массива
+                    }
+                }
+                else
+                {
+                    if (comandUser == ComandStopInput)// Если введена команда "Удалить", то завершаем цикл
+                        isCkeckInputNumber = true;
+                    else
+                        Console.WriteLine("Вы ввели не число");// Выводим сообщение об ошибке, если ввод не является числом 
+                }
+            }
+
+            return array;
+        }
+
+        static int[] SortNumberArray(int[] numbers)// Функция для сортировки массива
+        {
+            for (int i = 0; i < numbers.Length; i++) // Внешний цикл сортировки
+            {
+                for (int j = 0; j < numbers.Length - 1; j++)// Внутренний цикл сравнения элементов
+                {
+                    if (numbers[j] > numbers[j + 1])// Сравниваем соседние элементы
+                    {
+                        int tempNumber = numbers[j];// Сохраняем больший элемент во временную переменную
+                        numbers[j] = numbers[j + 1];// Записываем меньший элемент в текущую позицию
+                        numbers[j + 1] = tempNumber;// Записываем больший элемент в позицию следующего элемента
+                    }
+                }
+            }
+            for (int i = 0; i < numbers.Length; i++)// Печать отсортированного массива
+            {
+                Console.Write($"{numbers[i]} ");
+            }
+            return numbers; // Возвращаем отсортированный массив
+        }
+
+        static void RandomizeNumberArray(int[] numbers)// Функция для перемешивания элементов массива
+        {
+            Random random = new Random();// Создаем объект Random для генерации случайных чисел
+            int minRandom = 0;// Минимальное значение для случайного числа
+            int maxRandom = numbers.Length;// Максимальное значение для случайного числа
+            int changeNumber;// Временная переменная для хранения элемента при перемешивании
+            int randomNumber;// Случайный индекс для перемешивания
+
+            for (int j = 0; j < numbers.Length - 1; j++)// Цикл для перемешивания элементов
+            {
+                randomNumber = random.Next(minRandom, maxRandom);// Генерируем случайный индекс
+                changeNumber = numbers[j];// Сохраняем текущий элемент в переменную
+                numbers[j] = numbers[randomNumber];// Записываем элемент по случайному индексу в текущую позицию
+                numbers[randomNumber] = changeNumber;// Записываем сохраненный элемент в позицию по случайному индексу
+
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            int[] numbers = new int[0]; // Создаем пустой массив целых чисел
+            bool isStart = true; // Булевая для управления циклом программы
+
+            int number; // Переменная для хранения вводимого числа
+
+            string comandDelete = "Удалить";
+            string ComandSort = "Отсортировать"; 
+            string ComandRandom = "Перемешать"; 
+            string ComandExit = "Выход"; 
+
+            while (isStart) // Цикл который работает, пока пользователь не введет команду "Выход"
+            {
+                Console.Clear(); // Очищаем консоль и выводим меню с доступными командами
+
+                Console.WriteLine("Чтобы добавить число, введите его без пробелов");
+                Console.WriteLine("Чтобы удалить введите Удалить");
+                Console.WriteLine("Чтобы отсортировать введите Отсортировать");
+                Console.WriteLine("Чтобы перемешать введите Перемешать");
+                Console.WriteLine("Чтобы выйти введите Выход");
+
+                for (int i = 0; i < numbers.Length; i++)// Выводим текущий массив
+                {
+                    Console.Write($"{numbers[i]} ");
+                }
+
+                Console.WriteLine(); // Переход на новую строку
+                string comandUser = Console.ReadLine(); // Считываем команду пользователя
+
+                if (int.TryParse(comandUser, out number)) // Проверяем, является ли введенная команда числом
+                {
+                    numbers = AddNumberArray(number, numbers); // Если это число, добавляем его в массив
+                }
+                else // Если введена не числовая команда
+                {
+                    if (comandUser == comandDelete) // Если введена команда "удалить"
+                    {
+                        numbers = DeleteNumberArray(numbers); // Удаляем элемент из массива
+                    }
+                    else // Если введена другая команда
+                    {
+                        if (comandUser == ComandSort) // Если введена команда "сортировать"
+                        {
+                            numbers = SortNumberArray(numbers); // Сортируем массив
+                        }
+                        else // Если введена другая команда
+                        {
+                            if (comandUser == ComandRandom) // Если введена команда "рандом"
+                            {
+                                RandomizeNumberArray(numbers); // Перемешиваем элементы массива и выводим измененный массив
+
+                                for (int i = 0; i < numbers.Length; i++)
+                                {
+                                    Console.Write($"{numbers[i]} ");
+                                }
+                            }
+                            else // Если введена другая команда
+                            {
+                                if (comandUser == ComandExit) // Если введена команда "Выход"
+                                {
+                                    isStart = false; // Завершаем цикл
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
