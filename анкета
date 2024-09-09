@@ -1,0 +1,138 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mail;
+using System.Runtime.Remoting.Channels;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp12
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Managment managment = new Managment();
+
+            managment.Start();
+        }
+
+        class Student
+        {
+            public Student(string name, string group, int age)
+            {
+                Name = name;
+                Group = group;
+                Age = age;
+            }
+
+            public string Name { get; private set; }
+
+            public string Group { get; private set; }
+
+            public int Age { get; private set; }
+        }
+
+        class Managment
+        {
+            private List<Student> _students = new List<Student>();
+
+            public void Start()
+            {
+                bool isOpen = true;
+
+
+                const string CommandAddStudent = "1";
+                const string CommandDeleteStudent = "2";
+                const string CommandShowStudents = "3";
+                const string exit = "4";
+
+                while (isOpen)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Выберите действие");
+                    Console.WriteLine($"{CommandAddStudent}. Добавить студента");
+                    Console.WriteLine($"{CommandDeleteStudent}. Удалить студента");
+                    Console.WriteLine($"{CommandShowStudents}. Показать всех студентов");
+                    Console.WriteLine($"{exit}. Выйти");
+
+                    string choice = Console.ReadLine();
+
+                    switch (choice)
+                    {
+                        case CommandAddStudent:
+                            AddStudent();
+                            break;
+
+                        case CommandDeleteStudent:
+                            RemoveStudent();
+                            break;
+
+                        case CommandShowStudents:
+                            ShowStudents();
+                            break;
+
+                        case exit:
+                            isOpen = false;
+                            break;
+
+                        default:
+                            Console.WriteLine("Неправильный выбор.");
+                            break;
+                    }
+                }
+            }
+
+            private void AddStudent()
+            {
+                string name;
+                string group;
+                int age;
+
+                Console.Clear();
+                Console.WriteLine("Введите ФИО");
+                name = Console.ReadLine();
+                Console.WriteLine("Введите группу");
+                group = Console.ReadLine();
+                Console.WriteLine("Введите возраст");
+                age = int.Parse(Console.ReadLine());
+
+                Student studentAdd = new Student(name, group, age);
+                _students.Add(studentAdd);
+            }
+
+            private void RemoveStudent()
+            {
+                Console.Clear();
+                ShowStudents();
+                Console.WriteLine();
+                int number = 0;
+                string text;
+                bool isText = true;
+                Console.WriteLine("Введите номер студента, чтобы удалить");
+                text = Console.ReadLine();
+
+                while (isText)
+                {
+                    if (int.TryParse(text, out number))
+                        isText = false;
+                    else
+                        Console.WriteLine("Неверный номер");
+                }
+
+                if (number < _students.Count)
+                    _students.RemoveAt(number - 1);
+                Console.WriteLine("Студент был удалён.");
+
+            }
+
+            private void ShowStudents()
+            {
+                Console.Clear();
+
+                for (int i = 0; i < _students.Count; i++)
+                    Console.WriteLine($"{i + 1}) {_students[i].Name} {_students[i].Group} {_students[i].Age}");
+            }
+        }
+    }
+}
