@@ -13,10 +13,8 @@ namespace ConsoleApp12
         static void Main(string[] args)
         {
             Managment managment = new Managment();
-
             managment.Start();
         }
-
         class Student
         {
             public Student(string name, string group, int age)
@@ -25,14 +23,10 @@ namespace ConsoleApp12
                 Group = group;
                 Age = age;
             }
-
             public string Name { get; private set; }
-
             public string Group { get; private set; }
-
             public int Age { get; private set; }
         }
-
         class Managment
         {
             private List<Student> _students = new List<Student>();
@@ -40,7 +34,6 @@ namespace ConsoleApp12
             public void Start()
             {
                 bool isOpen = true;
-
 
                 const string CommandAddStudent = "1";
                 const string CommandDeleteStudent = "2";
@@ -82,56 +75,70 @@ namespace ConsoleApp12
                     }
                 }
             }
-
             private void AddStudent()
             {
-                string name;
-                string group;
-                int age;
-
                 Console.Clear();
                 Console.WriteLine("Введите ФИО");
-                name = Console.ReadLine();
+                string name = Console.ReadLine();
                 Console.WriteLine("Введите группу");
-                group = Console.ReadLine();
-                Console.WriteLine("Введите возраст");
-                age = int.Parse(Console.ReadLine());
+                string group = Console.ReadLine();
+                int age = GetValidAge();
 
                 Student studentAdd = new Student(name, group, age);
                 _students.Add(studentAdd);
             }
-
             private void RemoveStudent()
             {
                 Console.Clear();
                 ShowStudents();
-                Console.WriteLine();
-                int number = 0;
-                string text;
-                bool isText = true;
-                Console.WriteLine("Введите номер студента, чтобы удалить");
-                text = Console.ReadLine();
+                Console.WriteLine("Введите номер студента,чтобы удалить");
 
-                while (isText)
+                int number = GetValidIndex() - 1;
+
+                if (number >= 0 && number < _students.Count)
                 {
-                    if (int.TryParse(text, out number))
-                        isText = false;
-                    else
-                        Console.WriteLine("Неверный номер");
+                    _students.RemoveAt(number);
+                    Console.WriteLine("Студент был удалён.");
                 }
-
-                if (number < _students.Count)
-                    _students.RemoveAt(number - 1);
-                Console.WriteLine("Студент был удалён.");
-
+                else
+                {
+                    Console.WriteLine("Неверный номер студента.");
+                }
             }
-
             private void ShowStudents()
             {
                 Console.Clear();
-
                 for (int i = 0; i < _students.Count; i++)
+                {
                     Console.WriteLine($"{i + 1}) {_students[i].Name} {_students[i].Group} {_students[i].Age}");
+                }
+            }
+            private int GetValidAge()
+            {
+                int age;
+                while (true)
+                {
+                    Console.WriteLine("Введите возраст");
+                    string input = Console.ReadLine();
+                    if (int.TryParse(input, out age) && age > 0)
+                    {
+                        return age;
+                    }
+                    Console.WriteLine("Некорректный ввод.Пожалуйста число для возраста.");
+                }
+            }
+            private int GetValidIndex()
+            {
+                int index;
+                while (true)
+                {
+                    string input = Console.ReadLine();
+                    if (int.TryParse(input, out index) && index > 0)
+                    {
+                        return index;
+                    }
+                    Console.WriteLine("Некорректный ввод.Пожалуйста число для номера студента.");
+                }
             }
         }
     }
