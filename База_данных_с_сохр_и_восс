@@ -1,0 +1,169 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace База_данных_с_сохр_и_восст
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            UserDatabase userDb = new UserDatabase();
+            userDb.LoadData();
+
+            while (true)
+            {
+                Console.WriteLine("Выберите задачу:\n1. Добавить нового пользователя\n2. Активировать пользователя\n3. Деактивировать пользователя\n4. Вывести список всех пользователей\n5. Выход");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        Console.WriteLine("Введите имя пользователя:");
+                        string name = Console.ReadLine();
+
+                        Console.WriteLine("Введите Id пользователя:");
+                        int id = Int32.Parse(Console.ReadLine());
+
+                        Console.WriteLine("Введите логический статус пользователя (true/false):");
+                        bool isActive = Boolean.Parse(Console.ReadLine());
+
+                        User newUser = new User(name, id, isActive);
+                        userDb.AddUser(newUser);
+
+                        Console.WriteLine("Пользователь добавлен!");
+                        break;
+
+                    case "2":
+                        Console.WriteLine("Введите Id пользователя для активации:");
+                        int activateId = Int32.Parse(Console.ReadLine());
+                        userDb.ActivateUser(activateId);
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Введите Id пользователя для деактивации:");
+                        int deactivateId = Int32.Parse(Console.ReadLine());
+                        userDb.DeactivateUser(deactivateId);
+                        break;
+
+                    case "4":
+                        userDb.DisplayUsers();
+                        break;
+
+                    case "5":
+                        userDb.SaveData();
+                        Environment.Exit(0);
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверный выбор. Попробуйте снова.");
+                        break;
+                }
+            }
+
+            userDb.SaveData();
+        }
+    }
+    [Serializable]
+    public class User
+    {
+        public string Name { get; set; }
+
+        public int Id { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public User(string name, int id, bool isActive)
+        {
+            Name = name;
+            Id = id;
+            IsActive = isActive;
+        }
+
+        public void Active()
+        {
+            IsActive = true;
+        }
+
+        public void Deactivate()
+        {
+            IsActive = false;
+        }
+    }
+    public class UserDatabase
+    {
+        private List<User> users = new List<User>();
+
+        public void LoadData()
+        {
+            if (File.Exists("users.dat"))
+            {
+                try
+                {
+                    using (FileStream fs = new FileStream("users.dat", FileMode.Open, FileAccess.Read))
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        users = (List<User>)formatter.Deserialize(fs);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка загрузки данных: {ex.Message}");
+                }
+            }
+        }
+        public void SaveData()
+        {
+            if (users.Any())
+            {
+                try
+                {
+                    using (FileStream fs = new FileStream("users.dat", FileMode.Create, FileAccess.Write))
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.Serialize(fs, users);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка сохранения данных: {ex.Message}");
+                }
+            }
+        }
+        public void AddUser(User user)
+        {
+            users.Add(user);
+        }
+        public void ActivateUser(int userId)
+        {
+            User user = users.Find(users => users.Id == userId);
+            if (user != null)
+            {
+                user.Active();
+                Console.WriteLine("Пользователь активирован.");
+            }
+            else
+            {
+                Console.WriteLine("Пользователь с таким Id не найден.");
+            }
+        }
+        public void DeactivateUser(int userId)
+        {
+            User user = users.Find(users => users.Id == userId);
+            if (user != null)
+            {
+                user.Deactivate();
+                Console.WriteLine("Пользователь деактивирован.");
+            }
+        }
+        public void DisplayUsers()
+        {
+            foreach (User user in users)
+            {
+                Console.WriteLine($"Имя: {user.Name}, Id: {user.Id}, Статус активности: {user.IsActive}");
+            }
+        }
+    }
+}
