@@ -4,85 +4,32 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace База_данных_с_сохр_и_восст
+namespace StudentDatabase
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            UserDatabase userDb = new UserDatabase();
-            userDb.LoadData();
-
-            while (true)
-            {
-                Console.WriteLine("Выберите задачу:\n1. Добавить нового пользователя\n2. Активировать пользователя\n3. Деактивировать пользователя\n4. Вывести список всех пользователей\n5. Выход");
-                string choice = Console.ReadLine();
-
-                switch (choice)
-                {
-                    case "1":
-                        Console.WriteLine("Введите имя пользователя:");
-                        string name = Console.ReadLine();
-
-                        Console.WriteLine("Введите Id пользователя:");
-                        int id = Int32.Parse(Console.ReadLine());
-
-                        Console.WriteLine("Введите логический статус пользователя (true/false):");
-                        bool isActive = Boolean.Parse(Console.ReadLine());
-
-                        User newUser = new User(name, id, isActive);
-                        userDb.AddUser(newUser);
-
-                        Console.WriteLine("Пользователь добавлен!");
-                        break;
-
-                    case "2":
-                        Console.WriteLine("Введите Id пользователя для активации:");
-                        int activateId = Int32.Parse(Console.ReadLine());
-                        userDb.ActivateUser(activateId);
-                        break;
-
-                    case "3":
-                        Console.WriteLine("Введите Id пользователя для деактивации:");
-                        int deactivateId = Int32.Parse(Console.ReadLine());
-                        userDb.DeactivateUser(deactivateId);
-                        break;
-
-                    case "4":
-                        userDb.DisplayUsers();
-                        break;
-
-                    case "5":
-                        userDb.SaveData();
-                        Environment.Exit(0);
-                        break;
-
-                    default:
-                        Console.WriteLine("Неверный выбор. Попробуйте снова.");
-                        break;
-                }
-            }
-
-            userDb.SaveData();
+            StudentDatabase studentDb = new StudentDatabase();
+            studentDb.Start();
         }
     }
+
     [Serializable]
-    public class User
+    public abstract class learner
     {
         public string Name { get; set; }
-
         public int Id { get; set; }
-
         public bool IsActive { get; set; }
 
-        public User(string name, int id, bool isActive)
+        protected learner(string name, int id, bool isActive)
         {
             Name = name;
             Id = id;
             IsActive = isActive;
         }
 
-        public void Active()
+        public void Activate()
         {
             IsActive = true;
         }
@@ -92,20 +39,26 @@ namespace База_данных_с_сохр_и_восст
             IsActive = false;
         }
     }
-    public class UserDatabase
+    [Serializable]
+    public class Student : learner
     {
-        private List<User> users = new List<User>();
+        public Student(string name, int id, bool isActive)
+            : base(name, id, isActive) { }
+    }
+    public class StudentDatabase
+    {
+        private List<Student> students = new List<Student>();
 
         public void LoadData()
         {
-            if (File.Exists("users.dat"))
+            if (File.Exists("students.dat"))
             {
                 try
                 {
-                    using (FileStream fs = new FileStream("users.dat", FileMode.Open, FileAccess.Read))
+                    using (FileStream fs = new FileStream("students.dat", FileMode.Open, FileAccess.Read))
                     {
                         BinaryFormatter formatter = new BinaryFormatter();
-                        users = (List<User>)formatter.Deserialize(fs);
+                        students = (List<Student>)formatter.Deserialize(fs);
                     }
                 }
                 catch (Exception ex)
@@ -116,14 +69,14 @@ namespace База_данных_с_сохр_и_восст
         }
         public void SaveData()
         {
-            if (users.Any())
+            if (students.Any())
             {
                 try
                 {
-                    using (FileStream fs = new FileStream("users.dat", FileMode.Create, FileAccess.Write))
+                    using (FileStream fs = new FileStream("students.dat", FileMode.Create, FileAccess.Write))
                     {
                         BinaryFormatter formatter = new BinaryFormatter();
-                        formatter.Serialize(fs, users);
+                        formatter.Serialize(fs, students);
                     }
                 }
                 catch (Exception ex)
@@ -132,37 +85,91 @@ namespace База_данных_с_сохр_и_восст
                 }
             }
         }
-        public void AddUser(User user)
+        public void AddStudent(Student student)
         {
-            users.Add(user);
+            students.Add(student);
         }
-        public void ActivateUser(int userId)
+        public void ActivateStudent(int studentId)
         {
-            User user = users.Find(users => users.Id == userId);
-            if (user != null)
+            Student student = students.Find(s => s.Id == studentId);
+            if (student != null)
             {
-                user.Active();
-                Console.WriteLine("Пользователь активирован.");
+                student.Activate();
+                Console.WriteLine("Студент активирован.");
             }
             else
             {
-                Console.WriteLine("Пользователь с таким Id не найден.");
+                Console.WriteLine("Студент с таким Id не найден.");
             }
         }
-        public void DeactivateUser(int userId)
+        public void DeactivateStudent(int studentId)
         {
-            User user = users.Find(users => users.Id == userId);
-            if (user != null)
+            Student student = students.Find(s => s.Id == studentId);
+            if (student != null)
             {
-                user.Deactivate();
-                Console.WriteLine("Пользователь деактивирован.");
+                student.Deactivate();
+                Console.WriteLine("Студент деактивирован.");
             }
         }
-        public void DisplayUsers()
+        public void DisplayStudents()
         {
-            foreach (User user in users)
+            foreach (Student student in students)
             {
-                Console.WriteLine($"Имя: {user.Name}, Id: {user.Id}, Статус активности: {user.IsActive}");
+                Console.WriteLine($"Имя: {student.Name}, Id: {student.Id}, Статус активности: {student.IsActive}");
+            }
+        }
+        public void Start()
+        {
+            LoadData();
+
+            while (true)
+            {
+                Console.WriteLine("Выберите задачу:\n1. Добавить нового студента\n2. Активировать студента\n3. Деактивировать студента\n4. Вывести список всех студентов\n5. Выход");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        Console.WriteLine("Введите имя студента:");
+                        string name = Console.ReadLine();
+
+                        Console.WriteLine("Введите Id студента:");
+                        int id = Int32.Parse(Console.ReadLine());
+
+                        Console.WriteLine("Введите логический статус студента (true/false):");
+                        bool isActive = Boolean.Parse(Console.ReadLine());
+
+                        Student newStudent = new Student(name, id, isActive);
+                        AddStudent(newStudent);
+
+                        Console.WriteLine("Студент добавлен!");
+                        break;
+
+                    case "2":
+                        Console.WriteLine("Введите Id студента для активации:");
+                        int activateId = Int32.Parse(Console.ReadLine());
+                        ActivateStudent(activateId);
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Введите Id студента для деактивации:");
+                        int deactivateId = Int32.Parse(Console.ReadLine());
+                        DeactivateStudent(deactivateId);
+                        break;
+
+                    case "4":
+                        DisplayStudents();
+                        break;
+
+                    case "5":
+                        SaveData();
+                        Environment.Exit(0);
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверный выбор. Попробуйте снова.");
+                        break;
+                }
             }
         }
     }
