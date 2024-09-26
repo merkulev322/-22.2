@@ -34,15 +34,26 @@ namespace Динамический_массив
                 switch (comandUser)
                 {
                     case ComandDelete:
-                        numbers = DeleteNumberArray(numbers);
+                        Console.Write("Введите номер элемента для удаления: ");
+                        int deleteIndex;
+                        if (int.TryParse(Console.ReadLine(), out deleteIndex) && deleteIndex >= 0 && deleteIndex < numbers.Length)
+                        {
+                            numbers = DeleteNumberArray(numbers, deleteIndex);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Некорректный индекс");
+                        }
                         break;
 
                     case ComandSort:
-                        SortNumberArray(numbers);
+                        numbers = SortNumberArray(numbers);
+                        Console.WriteLine("Массив отсортирован");
                         break;
 
                     case ComandRandom:
-                        RandomNumberArray(numbers);
+                        numbers = RandomNumberArray(numbers);
+                        Console.WriteLine("Массив перемешан");
                         break;
 
                     case ComandExit:
@@ -53,6 +64,7 @@ namespace Динамический_массив
                         if (int.TryParse(comandUser, out int number))
                         {
                             numbers = AddNumberArray(number, numbers);
+                            Console.WriteLine("Число добавлено в массив");
                         }
                         else
                         {
@@ -72,7 +84,7 @@ namespace Динамический_массив
             Console.WriteLine();
         }
 
-        static void RandomNumberArray(int[] numbers)
+        static int[] RandomNumberArray(int[] numbers)
         {
             var random = new Random();
             int n = numbers.Length;
@@ -82,7 +94,7 @@ namespace Динамический_массив
                 int k = random.Next(n--);
                 (array[n], array[k]) = (array[k], array[n]);
             }
-            numbers = array;
+            return array;
         }
 
         static int[] SortNumberArray(int[] numbers)
@@ -110,19 +122,12 @@ namespace Динамический_массив
             return newArray;
         }
 
-        static int[] DeleteNumberArray(int[] numbers)
+        private static int[] DeleteNumberArray(int[] numbers, int index)
         {
-            Console.WriteLine("Введите индекс удаляемого объекта (от 0 до {0})", numbers.Length - 1);
-            if (int.TryParse(Console.ReadLine(), out int index) && index >= 0 && index < numbers.Length)
-            {
-                return numbers.Where((num, i) => i != index).ToArray();
-            }
-            else
-            {
-                Console.WriteLine("Некорректный индекс. Попробуйте снова.");
-            }
-
-            return numbers;
+            int[] newNumbers = new int[numbers.Length - 1];
+            Array.Copy(numbers, 0, newNumbers, 0, index);
+            Array.Copy(numbers, index + 1, newNumbers, index, numbers.Length - index - 1);
+            return newNumbers;
         }
     }
 }
