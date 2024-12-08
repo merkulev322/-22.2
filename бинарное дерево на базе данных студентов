@@ -1,0 +1,238 @@
+using System;
+
+namespace Бинарное дерево на базе данных студентов
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Managment managment = new Managment();
+            managment.Start();
+        }
+        
+        class Student
+        {
+            public Student(string name, string group, int age)
+            {
+                Name = name;
+                Group = group;
+                Age = age;
+            }
+            public string Name { get; private set; }
+            public string Group { get; private set; }
+            public int Age { get; private set; }
+        }
+
+        class TreeNode
+        {
+            public Student Student { get; set; }
+            public TreeNode Left { get; set; }
+            public TreeNode Right { get; set; }
+
+            public TreeNode(Student student)
+            {
+                Student = student;
+                Left = null;
+                Right = null;
+            }
+        }
+
+        class BinaryTree
+        {
+            private TreeNode _root;
+
+            public void Insert(Student student)
+            {
+                _root = InsertRec(_root, student);
+            }
+
+            private TreeNode InsertRec(TreeNode root, Student student)
+            {
+                if (root == null)
+                {
+                    return new TreeNode(student);
+                }
+
+                if (string.Compare(student.Name, root.Student.Name) < 0)
+                {
+                    root.Left = InsertRec(root.Left, student);
+                }
+                else
+                {
+                    root.Right = InsertRec(root.Right, student);
+                }
+
+                return root;
+            }
+
+            public void InOrderTraversal(Action<Student> action)
+            {
+                InOrderRec(_root, action);
+            }
+
+            private void InOrderRec(TreeNode root, Action<Student> action)
+            {
+                if (root != null)
+                {
+                    InOrderRec(root.Left, action);
+                    action(root.Student);
+                    InOrderRec(root.Right, action);
+                }
+            }
+
+            public bool Remove(string name)
+            {
+                return RemoveRec(ref _root, name);
+            }
+
+            private bool RemoveRec(ref TreeNode root, string name)
+            {
+                if (root == null)
+                {
+                    return false;
+                }
+
+                if (string.Compare(name, root.Student.Name) < 0)
+                {
+                    return RemoveRec(ref root.Left, name);
+                }
+                else if (string.Compare(name, root.Student.Name) > 0)
+                {
+                    return RemoveRec(ref root.Right, name);
+                }
+                else
+                {
+                    if (root.Left == null)
+                    {
+                        root = root.Right;
+                    }
+                    else if (root.Right == null)
+                    {
+                        root = root.Left;
+                    }
+                    else
+                    {
+                        TreeNode minNode = FindMin(root.Right);
+                        root.Student = minNode.Student;
+                        RemoveRec(ref root.Right, minNode.Student.Name);
+                    }
+                    return true;
+                }
+            }
+
+            private TreeNode FindMin(TreeNode root)
+            {
+                while (root.Left != null)
+                {
+                    root = root.Left;
+                }
+                return root;
+            }
+        }
+
+        class Managment
+        {
+            private BinaryTree _students = new BinaryTree();
+
+            public void Start()
+            {
+                bool isOpen = true;
+
+                const string CommandAddStudent = "1";
+                const string CommandDeleteStudent = "2";
+                const string CommandShowStudents = "3";
+                const string exit = "4";
+
+                while (isOpen)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Выберите действие");
+                    Console.WriteLine($"{CommandAddStudent}. Добавить студента");
+                    Console.WriteLine($"{CommandDeleteStudent}. Удалить студента");
+                    Console.WriteLine($"{CommandShowStudents}. Показать всех студентов");
+                    Console.WriteLine($"{exit}. Выйти");
+
+                    string choice = Console.ReadLine();
+
+                    switch (choice)
+                    {
+                        case CommandAddStudent:
+                            AddStudent();
+                            break;
+
+                        case CommandDeleteStudent:
+                            RemoveStudent();
+                            break;
+
+                        case CommandShowStudents:
+                            ShowStudents();
+                            break;
+
+                        case exit:
+                            isOpen = false;
+                            break;
+
+                        default:
+                            Console.WriteLine("Неправильный выбор.");
+                            break;
+                    }
+                }
+            }
+
+            private void AddStudent()
+            {
+                Console.Clear();
+                Console.WriteLine("Введите ФИО");
+                string name = Console.ReadLine();
+                Console.WriteLine("Введите группу");
+                string group = Console.ReadLine();
+                int age = GetValidAge();
+
+                Student studentAdd = new Student(name, group, age);
+                _students.Insert(studentAdd);
+            }
+
+            private void RemoveStudent()
+            {
+                Console.Clear();
+                ShowStudents();
+                Console.WriteLine("Введите ФИО студента, чтобы удалить");
+
+                string name = Console.ReadLine();
+
+                if (_students.Remove(name))
+                {
+                    Console.WriteLine("Студент был удалён.");
+                }
+                else
+                {
+                    Console.WriteLine("Студент не найден.");
+                }
+            }
+
+            private void ShowStudents()
+            {
+                Console.Clear();
+                _students.InOrderTraversal(student =>
+                {
+                    Console.WriteLine($"{student.Name} {student.Group} {student.Age}");
+                });
+            }
+
+            private int GetValidAge()
+            {
+                int age;
+                while (true)
+                {
+                    Console.WriteLine("Введите возраст");
+                    string input = Console.ReadLine();
+                    if (int.TryParse(input, out age) && age > 0)
+                    {
+                        return age;
+                    }
+                    Console.WriteLine("Некорректный ввод. Пожалуйста, введите число для возраста.");
+                }
+            }
+        }
+    }
+}
