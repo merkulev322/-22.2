@@ -1,0 +1,119 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using бинарное_дерево;
+
+namespace бинарное_дерево
+{
+    public class Manadment
+    {
+        private Node _rootNode;
+        private int _idRootNode;
+        public Manadment()
+        {
+            _rootNode = null;
+            _idRootNode = 0;
+        }
+
+        public void Start()
+        {
+            const string CommandAddNode = "1";
+            const string CommandRemoveNode = "2";
+            const string CommandPrintNode = "3";
+            const string CommandFindNode = "4";
+            const string CommandExit = "5";
+
+            bool isStart = true;
+            string commanduser;
+
+            while (isStart)
+            {
+                Console.Clear();
+                Console.WriteLine("добро пожаловать в бинарное дерево");
+                Console.WriteLine($"для добавление элемента в дерево введите {CommandAddNode}");
+                Console.WriteLine($"для удаление элемента введите {CommandRemoveNode}");
+                Console.WriteLine($"для вывода дерево введите {CommandPrintNode}");
+                Console.WriteLine($"для поиска элемента в дерево {CommandFindNode}");
+                Console.WriteLine($"для выхода введите {CommandExit}");
+                commanduser = Console.ReadLine();
+
+                switch (commanduser)
+                {
+                    case CommandAddNode:
+                        AddNode();
+                        break;
+                    case CommandRemoveNode:
+                        RemoveNode();
+                        break;
+                    case CommandPrintNode:
+                        PrintTree();
+                        break;
+                    case CommandFindNode:
+                        FindNode();
+                        break;
+                    case CommandExit:
+                        isStart = false;
+                        break;
+
+                }
+                if (isStart)
+                {
+                    Console.WriteLine("продолжить :");
+                    Console.ReadKey();
+                }
+            }
+
+        }
+
+        private void PrintTree()
+        {
+            if (_rootNode != null)
+                _rootNode.PrintValues();
+            else
+                Console.WriteLine("дерево пустое");
+        }
+
+        private void AddNode()
+        {
+            int number = InputNumber();
+
+            if (_rootNode == null)
+                _rootNode = new Node(_idRootNode, number);
+            else
+                _rootNode.Add(number);
+        }
+
+        private void RemoveNode()
+        {
+            int number = InputNumber();
+            _rootNode.Remuve(number);
+        }
+
+        private void FindNode()
+        {
+            int number = InputNumber();
+            _rootNode.Find(number);
+        }
+        private int InputNumber()
+        {
+            bool isInputNumber = false;
+            int number = 0;
+            string text;
+
+            while (isInputNumber == false)
+            {
+                Console.WriteLine("введите число");
+                text = Console.ReadLine();
+
+                if (int.TryParse(text, out number))
+                    isInputNumber = true;
+                else
+                    Console.WriteLine("вы ввели не число");
+            }
+
+            return number;
+        }
+    }
+}
