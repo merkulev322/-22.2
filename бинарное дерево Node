@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Security.Permissions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace бинарное_дерево
+{
+    public class Node
+    {
+        private Node _leftBranch;
+        private Node _rightBranch;
+
+        public Node(int id, int number)
+        {
+            _leftBranch = null;
+            _rightBranch = null;
+
+            Id = id;
+            Number = number;
+        }
+
+        public int Id { get; private set; }
+
+        public int Number { get; private set; }
+
+        public void Add(int number)
+        {
+            if (IsChooseLeftBranch(number))
+                AddToBranch(ref _leftBranch, number);
+            else
+                AddToBranch(ref _rightBranch, number);
+        }
+
+        public bool IsFree() => _leftBranch == null && _rightBranch == null;
+        private bool IsChooseLeftBranch(int number) => number < Number;
+
+        private bool IsBranchFree(Node node) => node == null;
+
+        private void AddToBranch(ref Node node, int number)
+        {
+            if (IsBranchFree(node))
+            {
+                int newId = Id + 1;
+                node = new Node(newId, number);
+            }
+            else
+            {
+                node.Add(number);
+            }
+        }
+        public void PrintValues()
+        {
+            if (IsBranchFree(_leftBranch) != true)
+                _leftBranch.PrintValues();
+
+            Console.WriteLine($"{Id}) - {Number}");
+
+            if (IsBranchFree(_rightBranch) != true)
+                _rightBranch.PrintValues();
+        }
+
+
+        public void Remuve(int number)
+        {
+            if (number == Number)
+            {
+                if (_leftBranch != null)
+                {
+                    Number = _leftBranch.Number;
+                    _leftBranch.Number = number;
+                }
+                else
+                {
+                    Number = _rightBranch.Number;
+                    _rightBranch.Number = number;
+                }
+            }
+            else
+            {
+                if (IsChooseLeftBranch(number))
+                    FindRemuveBranch(ref _leftBranch, number);
+                else
+                    FindRemuveBranch(ref _rightBranch, number);
+            }
+        }
+        private void FindRemuveBranch(ref Node node, int number)
+        {
+            if (node.Number == number)
+            {
+
+                RemuveBranch(ref node, number);
+            }
+            else
+                node.Remuve(number);
+        }
+        private void RemuveBranch(ref Node node, int number)
+        {
+            if (node.IsFree())
+            {
+                node = null;
+            }
+            else
+            {
+                node.ShiftBranch();
+            }
+        }
+
+        private void Shift(ref Node node)
+        {
+            if (node.IsFree())
+            {
+                Number = node.Number;
+                node = node.RemuveOneBranch();
+            }
+            else
+            {
+                node.ShiftBranch();
+            }
+        }
+        public void ShiftBranch()
+        {
+            if (_leftBranch != null)
+            {
+                Shift(ref _leftBranch);
+            }
+            else if (_rightBranch != null)
+            {
+                Shift(ref _rightBranch);
+            }
+        }
+        public Node RemuveOneBranch()
+        {
+            if (IsBranchFree(_leftBranch) != true)
+                return _leftBranch;
+            else
+                return _rightBranch;
+        }
+        public void Find(int number)
+        {
+            if (number == Number)
+            {
+                Console.WriteLine($"{Id} - {Number}");
+            }
+            else
+            {
+                if (IsChooseLeftBranch(number))
+                    _leftBranch.Find(number);
+                else
+                    _rightBranch.Find(number);
+            }
+        }
+    }
+}
