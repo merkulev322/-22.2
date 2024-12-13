@@ -7,113 +7,118 @@ using бинарное_дерево;
 
 namespace бинарное_дерево
 {
-    public class Management
+    public class Management // Определяем класс Management, который управляет бинарным деревом.
     {
-        private Node _rootNode;
-        private int _idRootNode;
-        public Management()
+        private Node _rootNode; // Переменная для хранения корневого узла дерева.
+        private int _idRootNode; // Переменная для хранения идентификатора корневого узла.
+
+        public Management() // Конструктор класса Management.
         {
-            _rootNode = null;
-            _idRootNode = 0;
+            _rootNode = null; // Инициализируем корневой узел как null (дерево пустое).
+            _idRootNode = 0; // Инициализируем идентификатор корневого узла как 0.
         }
 
-        public void Start()
+        public void Start() // Метод для запуска управления деревом.
         {
-            const string CommandAddNode = "1";
-            const string CommandRemoveNode = "2";
-            const string CommandPrintNode = "3";
-            const string CommandFindNode = "4";
-            const string CommandExit = "5";
+            // Константы для команд управления деревом.
+            const string CommandAddNode = "1"; // Команда для добавления узла.
+            const string CommandRemoveNode = "2"; // Команда для удаления узла.
+            const string CommandPrintNode = "3"; // Команда для печати дерева.
+            const string CommandFindNode = "4"; // Команда для поиска узла.
+            const string CommandExit = "5"; // Команда для выхода из программы.
 
-            bool isStart = true;
-            string commanduser;
+            bool isStart = true; // Переменная для управления циклом.
+            string commanduser; // Переменная для хранения команды пользователя.
 
-            while (isStart)
+            while (isStart) // Запускаем бесконечный цикл, пока isStart истинно.
             {
-                Console.Clear();
+                Console.Clear(); // Очищаем консоль.
+                // Выводим приветственное сообщение и инструкции для пользователя.
                 Console.WriteLine("добро пожаловать в бинарное дерево");
                 Console.WriteLine($"для добавление элемента в дерево введите {CommandAddNode}");
                 Console.WriteLine($"для удаление элемента введите {CommandRemoveNode}");
                 Console.WriteLine($"для вывода дерево введите {CommandPrintNode}");
                 Console.WriteLine($"для поиска элемента в дерево {CommandFindNode}");
                 Console.WriteLine($"для выхода введите {CommandExit}");
-                commanduser = Console.ReadLine();
+                commanduser = Console.ReadLine(); // Считываем команду пользователя.
 
+                // Обрабатываем введенную команду.
                 switch (commanduser)
                 {
-                    case CommandAddNode:
-                        AddNode();
+                    case CommandAddNode: // Если команда добавления узла,
+                        AddNode(); // Вызываем метод для добавления узла.
                         break;
-                    case CommandRemoveNode:
-                        RemoveNode();
+                    case CommandRemoveNode: // Если команда удаления узла,
+                        RemoveNode(); // Вызываем метод для удаления узла.
                         break;
-                    case CommandPrintNode:
-                        PrintTree();
+                    case CommandPrintNode: // Если команда печати дерева,
+                        PrintTree(); // Вызываем метод для печати дерева.
                         break;
-                    case CommandFindNode:
-                        FindNode();
+                    case CommandFindNode: // Если команда поиска узла,
+                        FindNode(); // Вызываем метод для поиска узла.
                         break;
-                    case CommandExit:
-                        isStart = false;
+                    case CommandExit: // Если команда выхода,
+                        isStart = false; // Устанавливаем isStart в false, чтобы выйти из цикла.
                         break;
-
                 }
-                if (isStart)
+
+                if (isStart) // Если программа не завершилась,
                 {
-                    Console.WriteLine("продолжить :");
-                    Console.ReadKey();
+                    Console.WriteLine("продолжить :"); // Запрашиваем пользователя о продолжении.
+                    Console.ReadKey(); // Ожидаем нажатия клавиши.
                 }
             }
-
         }
 
-        private void PrintTree()
+        private void PrintTree() // Метод для печати дерева.
         {
-            if (_rootNode != null)
-                _rootNode.PrintValues();
+            if (_rootNode != null) // Проверяем, есть ли корневой узел.
+                _rootNode.PrintValues(); // Если да, вызываем метод печати значений узлов.
             else
-                Console.WriteLine("дерево пустое");
+                Console.WriteLine("дерево пустое"); // Если нет, сообщаем, что дерево пустое.
         }
 
-        private void AddNode()
+        private void AddNode() // Метод для добавления узла в дерево.
         {
-            int number = InputNumber();
+            int number = InputNumber(); // Запрашиваем у пользователя число для добавления.
 
-            if (_rootNode == null)
-                _rootNode = new Node(_idRootNode, number);
+            if (_rootNode == null) // Если дерево пустое (корневой узел равен null),
+                _rootNode = new Node(_idRootNode, number); // Создаем новый корневой узел.
             else
-                _rootNode.Add(number);
+                _rootNode.Add(number); // Если дерево не пустое, добавляем узел в дерево.
         }
 
-        private void RemoveNode()
+        private void RemoveNode() // Метод для удаления узла из дерева.
         {
-            int number = InputNumber();
-            _rootNode.Remuve(number);
+            int number = InputNumber(); // Запрашиваем у пользователя число для удаления.
+            _rootNode.Remuve(number); // Вызываем метод удаления узла.
         }
 
-        private void FindNode()
+        private void FindNode() // Метод для поиска узла в дереве.
         {
-            int number = InputNumber();
-            _rootNode.Find(number);
+            int number = InputNumber(); // Запрашиваем у пользователя число для поиска.
+            _rootNode.Find(number); // Вызываем метод поиска узла.
         }
-        private int InputNumber()
-        {
-            bool isInputNumber = false;
-            int number = 0;
-            string text;
 
-            while (isInputNumber == false)
+        private int InputNumber() // Метод для ввода числа пользователем.
+        {
+            bool isInputNumber = false; // Переменная для контроля ввода числа.
+            int number = 0; // Переменная для хранения введенного числа.
+            string text; // Переменная для хранения текстового ввода.
+
+            while (isInputNumber == false) // Запускаем цикл, пока число не будет введено корректно.
             {
-                Console.WriteLine("введите число");
-                text = Console.ReadLine();
+                Console.WriteLine("введите число"); // Запрашиваем у пользователя ввод числа.
+                text = Console.ReadLine(); // Считываем ввод пользователя.
 
+                // Проверяем, удалось ли преобразовать ввод в целое число.
                 if (int.TryParse(text, out number))
-                    isInputNumber = true;
+                    isInputNumber = true; // Если успешно, устанавливаем флаг в true.
                 else
-                    Console.WriteLine("вы ввели не число");
+                    Console.WriteLine("вы ввели не число"); // Если нет, сообщаем об ошибке.
             }
 
-            return number;
+            return number; // Возвращаем введенное число.
         }
     }
 }
