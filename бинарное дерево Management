@@ -7,11 +7,11 @@ using бинарное_дерево;
 
 namespace бинарное_дерево
 {
-    public class Manadment
+    public class Management
     {
         private Node _rootNode;
         private int _idRootNode;
-        public Manadment()
+        public Management()
         {
             _rootNode = null;
             _idRootNode = 0;
